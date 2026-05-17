@@ -193,6 +193,10 @@ Amazing food, the butter chicken was outstanding! — Rahul S. 5 stars
 Best place for family dinner, staff very welcoming. — Priya M. 5 stars"></textarea>
       <p class="key-note">More reviews = better copy. Aim for at least 5.</p>
     </div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem">
+      <span id="saveStatus" style="font-size:11px;color:var(--green);opacity:0;transition:opacity .3s">Saved ✓</span>
+      <button onclick="clearSavedData()" style="background:none;border:none;color:var(--cream-muted);font-size:11px;cursor:pointer;font-family:DM Sans,sans-serif;text-decoration:underline">Clear saved data</button>
+    </div>
     <button class="btn btn-primary" onclick="startGeneration()">✦ Generate Website — Free Preview</button>
   </div>
 
@@ -274,11 +278,51 @@ Best place for family dinner, staff very welcoming. — Priya M. 5 stars"></text
 let generatedHTML = '';
 let restData = {};
 
+// All fields autosaved
+const SAVE_FIELDS = [
+  'anthropicKey','razorpayKey','bizName',
+  'restaurantName','restaurantCity','restaurantAddress',
+  'restaurantPhone','cuisineType','restaurantRating',
+  'priceRange','colorTheme','instagram','facebook',
+  'mapsEmbed','hoursWeekday','hoursWeekend','hoursNote',
+  'customerReviews'
+];
+
 window.addEventListener('load', () => {
-  ['anthropicKey','razorpayKey','bizName'].forEach(id => {
+  SAVE_FIELDS.forEach(id => {
     const v = localStorage.getItem('ms_'+id);
-    if (v) document.getElementById(id).value = v;
+    const el = document.getElementById(id);
+    if (v && el) el.value = v;
   });
+  const savedMenu = localStorage.getItem('ms_menuItems');
+  if (savedMenu) {
+    try {
+      const items = JSON.parse(savedMenu);
+      const container = document.getElementById('menuItems');
+      if (items.length > 0) {
+        container.innerHTML = '';
+        items.forEach(item => {
+          const row = document.createElement('div');
+          row.className = 'menu-item-row';
+          row.innerHTML = '<input type="text" value="'+item.name+'" placeholder="Dish name"><input type="text" value="'+item.price+'" placeholder="Price e.g. Rs.350" style="width:120px"><button class="remove-btn" onclick="removeMenuItem(this)">x</button>';
+          container.appendChild(row);
+        });
+      }
+    } catch(e) {}
+  }
+});
+
+// Autosave on any input/change
+document.addEventListener('input', e => {
+  const id = e.target.id;
+  if (SAVE_FIELDS.includes(id)) localStorage.setItem('ms_'+id, e.target.value);
+  if (e.target.closest && e.target.closest('#menuItems')) {
+    localStorage.setItem('ms_menuItems', JSON.stringify(getMenuItems()));
+  }
+});
+document.addEventListener('change', e => {
+  const id = e.target.id;
+  if (SAVE_FIELDS.includes(id)) localStorage.setItem('ms_'+id, e.target.value);
 });
 
 function saveKeys() {
@@ -286,6 +330,14 @@ function saveKeys() {
     const v = document.getElementById(id).value.trim();
     if (v) localStorage.setItem('ms_'+id, v);
   });
+}
+
+function clearSavedData() {
+  if (confirm('Clear all saved form data?')) {
+    SAVE_FIELDS.forEach(id => localStorage.removeItem('ms_'+id));
+    localStorage.removeItem('ms_menuItems');
+    location.reload();
+  }
 }
 
 function goToPanel(n) {
