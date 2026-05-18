@@ -97,6 +97,21 @@ textarea{resize:vertical;min-height:100px;line-height:1.6}
 .add-btn{background:rgba(212,168,75,0.15);border:1px dashed var(--border-strong);color:var(--gold);padding:8px;border-radius:5px;cursor:pointer;font-size:12px;width:100%;font-family:'DM Sans',sans-serif;margin-top:.5rem;transition:background .2s}
 .add-btn:hover{background:rgba(212,168,75,0.25)}
 .remove-btn{background:rgba(192,57,43,.2);border:none;color:#e74c3c;width:28px;height:28px;border-radius:4px;cursor:pointer;font-size:14px;flex-shrink:0}
+.img-slots-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem}
+.img-slot{border:2px dashed var(--border);border-radius:8px;padding:1rem;text-align:center;cursor:pointer;transition:all .2s;position:relative;min-height:150px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.4rem;overflow:hidden}
+.img-slot:hover,.img-slot.dragover{border-color:var(--gold);background:rgba(212,168,75,.05)}
+.img-slot input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.islot-icon{font-size:1.6rem}
+.islot-name{font-size:11px;font-weight:500;color:var(--cream);text-transform:uppercase;letter-spacing:.06em}
+.islot-desc{font-size:10px;color:var(--cream-muted);line-height:1.5;text-align:center}
+.islot-preview{position:absolute;inset:0;border-radius:6px;overflow:hidden;display:none}
+.islot-preview img{width:100%;height:100%;object-fit:cover}
+.islot-overlay{position:absolute;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s;z-index:2}
+.islot-overlay span{font-size:11px;color:#fff;background:rgba(0,0,0,.6);padding:3px 8px;border-radius:4px}
+.img-slot:hover .islot-overlay{opacity:1}
+.img-slot.filled .islot-icon,.img-slot.filled .islot-name,.img-slot.filled .islot-desc{display:none}
+.img-slot.filled .islot-preview{display:block}
+.img-slot.filled{border-color:var(--green);border-style:solid}
 @media(max-width:600px){.header{padding:1rem 1.25rem}.main{padding:1.5rem 1rem}.grid2{grid-template-columns:1fr}.prev-toolbar{flex-direction:column;align-items:flex-start}}
 </style>
 </head>
@@ -113,7 +128,9 @@ textarea{resize:vertical;min-height:100px;line-height:1.6}
     <div class="step-line"></div>
     <div class="step" id="s3"><div class="step-num">3</div> Preview</div>
     <div class="step-line"></div>
-    <div class="step" id="s4"><div class="step-num">4</div> Purchase</div>
+    <div class="step" id="s4"><div class="step-num">4</div> Images</div>
+    <div class="step-line"></div>
+    <div class="step" id="s5"><div class="step-num">5</div> Purchase</div>
   </div>
 
   <!-- PANEL 1 -->
@@ -223,7 +240,7 @@ Best place for family dinner, staff very welcoming. — Priya M. 5 stars"></text
       <div class="prev-actions">
         <button class="btn btn-outline" style="padding:10px 18px;font-size:13px" onclick="goToPanel(1)">Back</button>
         <button class="btn btn-outline" style="padding:10px 18px;font-size:13px;color:var(--green);border-color:var(--green)" onclick="downloadWebsite()">⬇ Test Download</button>
-        <button class="btn btn-primary" style="width:auto;padding:10px 22px;font-size:13px" onclick="goToPanel(4)">Purchase Rs.3,999</button>
+        <button class="btn btn-primary" style="width:auto;padding:10px 22px;font-size:13px" onclick="goToPanel(4)">Add Images →</button>
       </div>
     </div>
     <div class="frame-wrap">
@@ -235,8 +252,74 @@ Best place for family dinner, staff very welcoming. — Priya M. 5 stars"></text
     </div>
   </div>
 
-  <!-- PANEL 4 -->
+  <!-- PANEL 4: IMAGES -->
   <div class="panel" id="panel4">
+    <h1 class="panel-title">Add <em>photos</em> to your website</h1>
+    <p class="panel-sub">Drag and drop restaurant photos into each slot. Images are embedded directly into the HTML — no separate folder needed when deploying.</p>
+    <div class="sbox">
+      <div class="sbox-title">Drop photos into each slot</div>
+      <div class="img-slots-grid">
+
+        <div class="img-slot" id="islot-hero" ondragover="islotDragOver(event,this)" ondragleave="islotDragLeave(this)" ondrop="islotDrop(event,this,'hero')">
+          <input type="file" accept="image/*" onchange="islotFileChange(this,'hero')">
+          <div class="islot-preview"><img id="iprev-hero" src=""><div class="islot-overlay"><span>Change</span></div></div>
+          <div class="islot-icon">🌅</div>
+          <div class="islot-name">Hero Image</div>
+          <div class="islot-desc">Main wide photo<br>Restaurant exterior or interior</div>
+        </div>
+
+        <div class="img-slot" id="islot-interior" ondragover="islotDragOver(event,this)" ondragleave="islotDragLeave(this)" ondrop="islotDrop(event,this,'interior')">
+          <input type="file" accept="image/*" onchange="islotFileChange(this,'interior')">
+          <div class="islot-preview"><img id="iprev-interior" src=""><div class="islot-overlay"><span>Change</span></div></div>
+          <div class="islot-icon">🏠</div>
+          <div class="islot-name">Interior</div>
+          <div class="islot-desc">Dining area<br>or ambiance shot</div>
+        </div>
+
+        <div class="img-slot" id="islot-food1" ondragover="islotDragOver(event,this)" ondragleave="islotDragLeave(this)" ondrop="islotDrop(event,this,'food1')">
+          <input type="file" accept="image/*" onchange="islotFileChange(this,'food1')">
+          <div class="islot-preview"><img id="iprev-food1" src=""><div class="islot-overlay"><span>Change</span></div></div>
+          <div class="islot-icon">🍽️</div>
+          <div class="islot-name">Food Photo 1</div>
+          <div class="islot-desc">Signature dish<br>or best seller</div>
+        </div>
+
+        <div class="img-slot" id="islot-food2" ondragover="islotDragOver(event,this)" ondragleave="islotDragLeave(this)" ondrop="islotDrop(event,this,'food2')">
+          <input type="file" accept="image/*" onchange="islotFileChange(this,'food2')">
+          <div class="islot-preview"><img id="iprev-food2" src=""><div class="islot-overlay"><span>Change</span></div></div>
+          <div class="islot-icon">🥘</div>
+          <div class="islot-name">Food Photo 2</div>
+          <div class="islot-desc">Another popular dish<br>or drinks</div>
+        </div>
+
+        <div class="img-slot" id="islot-food3" ondragover="islotDragOver(event,this)" ondragleave="islotDragLeave(this)" ondrop="islotDrop(event,this,'food3')">
+          <input type="file" accept="image/*" onchange="islotFileChange(this,'food3')">
+          <div class="islot-preview"><img id="iprev-food3" src=""><div class="islot-overlay"><span>Change</span></div></div>
+          <div class="islot-icon">🍖</div>
+          <div class="islot-name">Food Photo 3</div>
+          <div class="islot-desc">Gallery photo<br>or ambiance</div>
+        </div>
+
+        <div class="img-slot" id="islot-food4" ondragover="islotDragOver(event,this)" ondragleave="islotDragLeave(this)" ondrop="islotDrop(event,this,'food4')">
+          <input type="file" accept="image/*" onchange="islotFileChange(this,'food4')">
+          <div class="islot-preview"><img id="iprev-food4" src=""><div class="islot-overlay"><span>Change</span></div></div>
+          <div class="islot-icon">📸</div>
+          <div class="islot-name">Food Photo 4</div>
+          <div class="islot-desc">Extra gallery photo<br>(optional)</div>
+        </div>
+
+      </div>
+      <p class="key-note" style="margin-top:1rem">💡 You can skip slots you don't have photos for. At least 1 photo recommended.</p>
+    </div>
+    <div style="display:flex;gap:.75rem;margin-top:1rem">
+      <button class="btn btn-outline" style="flex:1;padding:13px" onclick="goToPanel(3)">← Back to Preview</button>
+      <button class="btn btn-outline" style="flex:1;padding:13px;color:var(--green);border-color:var(--green)" onclick="downloadWithImages()">⬇ Test Download with Images</button>
+      <button class="btn btn-primary" style="flex:1;padding:13px" onclick="goToPanel(5)">Purchase Rs.3,999 →</button>
+    </div>
+  </div>
+
+  <!-- PANEL 5: PAYMENT -->
+  <div class="panel" id="panel5">
     <div class="pay-wrap">
       <h1 class="panel-title" style="text-align:center;margin-bottom:.4rem">One-time <em>purchase</em></h1>
       <p class="panel-sub" style="text-align:center;margin-bottom:1.25rem">Pay once, own your website forever.</p>
@@ -245,7 +328,7 @@ Best place for family dinner, staff very welcoming. — Priya M. 5 stars"></text
         <div class="price-amt"><span class="price-sup">Rs.</span>3,999</div>
         <div class="price-desc">One-time payment — Instant download</div>
         <ul class="price-features">
-          <li>Full HTML file — yours forever</li>
+          <li>Full HTML file with images embedded</li>
           <li>Mobile responsive design</li>
           <li>Menu section with your dishes</li>
           <li>Opening hours and contact info</li>
@@ -257,12 +340,12 @@ Best place for family dinner, staff very welcoming. — Priya M. 5 stars"></text
       </div>
       <button class="btn btn-green" onclick="initiatePayment()">Pay Rs.3,999 via Razorpay</button>
       <p class="pay-note">Accepts UPI, Cards, Net Banking and Wallets.</p>
-      <button class="btn btn-outline" style="width:100%;margin-top:.6rem" onclick="goToPanel(3)">Back to Preview</button>
+      <button class="btn btn-outline" style="width:100%;margin-top:.6rem" onclick="goToPanel(4)">← Back to Images</button>
     </div>
   </div>
 
-  <!-- PANEL 5 -->
-  <div class="panel" id="panel5">
+  <!-- PANEL 6: SUCCESS -->
+  <div class="panel" id="panel6">
     <div class="success-wrap">
       <div class="success-icon">✓</div>
       <h2 class="success-title">Payment Successful!</h2>
@@ -342,8 +425,9 @@ function clearSavedData() {
 
 function goToPanel(n) {
   document.querySelectorAll('.panel').forEach((p,i) => p.classList.toggle('active', i===n-1));
-  for (let i=1;i<=4;i++){
+  for (let i=1;i<=5;i++){
     const s=document.getElementById('s'+i);
+    if (!s) continue;
     s.classList.remove('active','done');
     if(i<n) s.classList.add('done');
     else if(i===n) s.classList.add('active');
@@ -783,17 +867,62 @@ function initiatePayment() {
   const bizName = localStorage.getItem('ms_bizName')||'MenuSite';
   if (!rzpKey){ alert('Please enter your Razorpay Key ID in Step 1.'); goToPanel(1); return; }
   try {
-    const rzp = new Razorpay({key:rzpKey,amount:399900,currency:'INR',name:bizName,description:'Restaurant Website — '+restData.name,handler:()=>goToPanel(5),theme:{color:'#d4a84b'}});
+    const rzp = new Razorpay({key:rzpKey,amount:399900,currency:'INR',name:bizName,description:'Restaurant Website — '+restData.name,handler:()=>goToPanel(6),theme:{color:'#d4a84b'}});
     rzp.on('payment.failed',r=>alert('Payment failed: '+r.error.description));
     rzp.open();
   } catch(e){ alert('Could not open Razorpay. Check your Key ID.'); }
 }
 
+// ── IMAGE SLOTS ──
+let siteImages = {};
+
+function islotDragOver(e,el){ e.preventDefault(); el.classList.add('dragover'); }
+function islotDragLeave(el){ el.classList.remove('dragover'); }
+function islotDrop(e,el,id){ e.preventDefault(); el.classList.remove('dragover'); const f=e.dataTransfer.files[0]; if(f&&f.type.startsWith('image/')) processSlotImage(f,id); }
+function islotFileChange(input,id){ if(input.files[0]) processSlotImage(input.files[0],id); }
+
+function processSlotImage(file,id) {
+  const reader = new FileReader();
+  reader.onload = e => {
+    siteImages[id] = e.target.result;
+    document.getElementById('iprev-'+id).src = e.target.result;
+    document.getElementById('islot-'+id).classList.add('filled');
+  };
+  reader.readAsDataURL(file);
+}
+
+function embedImages(html) {
+  let out = html;
+  if (siteImages.hero) {
+    out = out.replace(/url\(['"']?hero\.jpg['"']?\)/g, `url('${siteImages.hero}')`);
+    out = out.replace(/<div class="hero-right-placeholder">[^<]*<\/div>/, `<img src="${siteImages.hero}" alt="Restaurant" style="width:100%;height:100%;object-fit:cover;display:block">`);
+  }
+  if (siteImages.interior) {
+    out = out.replace(/src="interior\.jpg"/g, `src="${siteImages.interior}"`);
+    out = out.replace(/📷 Add interior photo here/g, `<img src="${siteImages.interior}" alt="Interior" style="width:100%;height:100%;object-fit:cover;display:block">`);
+  }
+  ['food1','food2','food3','food4'].forEach(key => {
+    if (!siteImages[key]) return;
+    out = out.replace(new RegExp(`src="${key}\\.jpg"`, 'g'), `src="${siteImages[key]}"`);
+  });
+  return out;
+}
+
+function downloadWithImages() {
+  if (!generatedHTML) return alert('Please generate a website first.');
+  const final = embedImages(generatedHTML);
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([final],{type:'text/html'}));
+  a.download = (restData.name||'restaurant').toLowerCase().replace(/\s+/g,'-')+'-with-images.html';
+  a.click();
+}
+
 function downloadWebsite() {
   if (!generatedHTML) return;
+  const final = Object.keys(siteImages).length > 0 ? embedImages(generatedHTML) : generatedHTML;
   const a = document.createElement('a');
-  a.href = URL.createObjectURL(new Blob([generatedHTML],{type:'text/html'}));
-  a.download = restData.name.toLowerCase().replace(/\s+/g,'-')+'-website.html';
+  a.href = URL.createObjectURL(new Blob([final],{type:'text/html'}));
+  a.download = (restData.name||'restaurant').toLowerCase().replace(/\s+/g,'-')+'-website.html';
   a.click();
 }
 </script>
