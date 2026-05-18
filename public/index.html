@@ -100,7 +100,7 @@ textarea{resize:vertical;min-height:100px;line-height:1.6}
 .img-slots-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem}
 .img-slot{border:2px dashed var(--border);border-radius:8px;padding:1rem;text-align:center;cursor:pointer;transition:all .2s;position:relative;min-height:150px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.4rem;overflow:hidden}
 .img-slot:hover,.img-slot.dragover{border-color:var(--gold);background:rgba(212,168,75,.05)}
-.img-slot input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.img-slot input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;z-index:3}
 .islot-icon{font-size:1.6rem}
 .islot-name{font-size:11px;font-weight:500;color:var(--cream);text-transform:uppercase;letter-spacing:.06em}
 .islot-desc{font-size:10px;color:var(--cream-muted);line-height:1.5;text-align:center}
@@ -730,19 +730,65 @@ footer{padding:2rem;text-align:center;font-size:11px;color:${t.tx}44;border-top:
 .footer-social{display:flex;gap:.75rem;justify-content:center;margin-top:.75rem}
 
 @media(max-width:768px){
-  .hero{grid-template-columns:1fr;min-height:auto}
-  .hero-right{min-height:280px}
-  .hero-left{padding:3rem 1.5rem}
-  .about{grid-template-columns:1fr}
-  .about-side{position:static}
-  .gallery-grid{grid-template-columns:1fr 1fr;grid-template-rows:auto;height:auto}
-  .gi:first-child{grid-row:auto}
-  .gi:nth-child(2){grid-column:auto;grid-row:auto}
-  .gi:nth-child(3){grid-column:auto;grid-row:auto}
-  .tgrid,.visit-inner,.why-grid{grid-template-columns:1fr}
-  nav{grid-template-columns:1fr auto}
+  /* NAV */
+  nav{grid-template-columns:1fr auto;padding:.9rem 1.25rem}
   .nav-links{display:none}
   .nav-right{display:none}
+  .nav-logo{text-align:left;font-size:1.1rem}
+  .nav-btn{padding:6px 14px;font-size:10px}
+
+  /* HERO — stack vertically on mobile */
+  .hero{grid-template-columns:1fr;min-height:auto}
+  .hero-right{min-height:240px;order:-1}
+  .hero-left{padding:2rem 1.25rem;order:1}
+  .hero-eyebrow{font-size:9px;margin-bottom:1rem}
+  .hero-h1{font-size:1.9rem !important;line-height:1.15;margin-bottom:1rem}
+  .hero-sub{font-size:14px;line-height:1.7;margin-bottom:1.5rem}
+  .hero-tags{gap:6px;margin-bottom:1rem}
+  .htag{font-size:9px;padding:3px 10px}
+  .hero-cta{padding:11px 22px;font-size:12px}
+  .hero-rating{font-size:11px}
+
+  /* ABOUT */
+  .about{grid-template-columns:1fr;padding:0 1.25rem;margin:3rem auto;gap:2rem}
+  .about-side{position:static}
+  .about-title{font-size:1.6rem}
+  .about-content p{font-size:14px}
+  .about-img{min-height:220px}
+
+  /* WHY */
+  .why-grid{grid-template-columns:1fr}
+  .why-item{padding:1.25rem}
+  .why-num{font-size:1.5rem;min-width:36px}
+  .why-text{font-size:13px}
+  .sec-title{font-size:1.5rem}
+
+  /* MENU */
+  .menu-sec{padding:3rem 1.25rem}
+  .mc{padding:.9rem 0}
+  .mc-name{font-size:13px}
+  .mc-price{font-size:13px}
+
+  /* GALLERY */
+  .gallery-grid{grid-template-columns:1fr 1fr;grid-template-rows:auto;height:auto;gap:.75rem}
+  .gi{min-height:150px}
+  .gi:first-child{grid-row:auto;grid-column:1/-1}
+  .gi:nth-child(2){grid-column:auto;grid-row:auto}
+  .gi:nth-child(3){grid-column:auto;grid-row:auto}
+
+  /* TESTIMONIALS */
+  .tgrid{grid-template-columns:1fr;gap:1rem}
+  .tcard{padding:1.25rem}
+  .tcard-q{font-size:13px}
+
+  /* VISIT */
+  .visit-inner{grid-template-columns:1fr;gap:2rem}
+  .visit h3{font-size:1.4rem}
+  .hr-row{font-size:12px}
+  .vd{font-size:12px}
+
+  /* GENERAL */
+  .why,.testis,.gallery,.visit,.menu-sec{padding:3rem 1.25rem}
 }
 </style>
 </head>
@@ -894,53 +940,39 @@ function processSlotImage(file,id) {
 function embedImages(html) {
   let out = html;
 
-  // HERO — new split layout (hero-right div) + old full-width background
+  // HERO
   if (siteImages.hero) {
-    // New layout: replace hero-right-placeholder div with img
-    out = out.replace(
-      /<div class="hero-right-placeholder">[\s\S]*?<\/div>/,
-      `<img src="${siteImages.hero}" alt="Restaurant" style="width:100%;height:100%;object-fit:cover;display:block">`
-    );
-    // Old layout: replace background-image url
-    out = out.replace(/url\(['"]?hero\.jpg['"]?\)/g, `url('${siteImages.hero}')`);
+    out = out.replace(/<div class="hero-right-placeholder">[^<]*<\/div>/, '<img src="' + siteImages.hero + '" alt="Restaurant" style="width:100%;height:100%;object-fit:cover;display:block">');
+    out = out.replace(/url\(['"]?hero\.jpg['"]?\)/g, "url('" + siteImages.hero + "')");
   }
 
   // INTERIOR
   if (siteImages.interior) {
-    out = out.replace(/src="interior\.jpg"/g, `src="${siteImages.interior}"`);
-    out = out.replace(
-      /<div class="about-img">[\s\S]*?<\/div>/,
-      `<div class="about-img"><img src="${siteImages.interior}" alt="Interior" style="width:100%;height:100%;object-fit:cover;display:block;min-height:280px"></div>`
-    );
+    out = out.replace(/src="interior\.jpg"/g, 'src="' + siteImages.interior + '"');
+    const aboutImgRx = /<div class="about-img">[\s\S]*?<\/div>/;
+    out = out.replace(aboutImgRx, '<div class="about-img"><img src="' + siteImages.interior + '" alt="Interior" style="width:100%;height:100%;object-fit:cover;display:block;min-height:280px"></div>');
   }
 
-  // GALLERY — new layout uses gi divs with placeholder text
-  const galleryMap = {
-    food1: ['📷 Add main photo', '📷 Add food photo 1'],
-    food2: ['📷 Add food photo', '📷 Add food photo 2'],
-    food3: ['📷 Add ambiance photo'],
-    food4: ['📷 Add food photo 3']
-  };
-
-  ['food1','food2','food3','food4'].forEach(key => {
-    if (!siteImages[key]) return;
-    const img = `<img src="${siteImages[key]}" alt="food" style="width:100%;height:100%;object-fit:cover;display:block">`;
-
-    // Old layout: replace src="foodN.jpg"
-    out = out.replace(new RegExp(`src="${key}\.jpg"`, 'g'), `src="${siteImages[key]}"`);
-
-    // New layout: replace gi placeholder divs
-    (galleryMap[key]||[]).forEach(ph => {
-      out = out.replace(
-        new RegExp(`<div class="gi">${ph.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')}<\/div>`, 'g'),
-        `<div class="gi">${img}</div>`
-      );
-    });
-  });
+  // GALLERY
+  if (siteImages.food1) {
+    out = out.replace(/src="food1\.jpg"/g, 'src="' + siteImages.food1 + '"');
+    out = out.split('<div class="gi">\u{1F4F7} Add main photo</div>').join('<div class="gi"><img src="' + siteImages.food1 + '" alt="food" style="width:100%;height:100%;object-fit:cover;display:block"></div>');
+    out = out.split('<div class="gallery-img"><img src="food1.jpg"').join('<div class="gallery-img"><img src="' + siteImages.food1 + '"');
+  }
+  if (siteImages.food2) {
+    out = out.replace(/src="food2\.jpg"/g, 'src="' + siteImages.food2 + '"');
+    out = out.split('<div class="gi">\u{1F4F7} Add food photo</div>').join('<div class="gi"><img src="' + siteImages.food2 + '" alt="food" style="width:100%;height:100%;object-fit:cover;display:block"></div>');
+  }
+  if (siteImages.food3) {
+    out = out.replace(/src="food3\.jpg"/g, 'src="' + siteImages.food3 + '"');
+    out = out.split('<div class="gi">\u{1F4F7} Add ambiance photo</div>').join('<div class="gi"><img src="' + siteImages.food3 + '" alt="food" style="width:100%;height:100%;object-fit:cover;display:block"></div>');
+  }
+  if (siteImages.food4) {
+    out = out.replace(/src="food4\.jpg"/g, 'src="' + siteImages.food4 + '"');
+  }
 
   return out;
 }
-
 function downloadWithImages() {
   if (!generatedHTML) return alert('Please generate a website first.');
   const final = embedImages(generatedHTML);
