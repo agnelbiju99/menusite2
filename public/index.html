@@ -171,6 +171,9 @@ textarea{resize:vertical;min-height:100px;line-height:1.6}
             <option value="navy">Deep Navy</option>
             <option value="dark">Elegant Dark</option>
             <option value="minimal">Clean Minimal</option>
+            <option value="saffron">Spiced Saffron</option>
+            <option value="teal">Kerala Teal</option>
+            <option value="crimson">Crimson Gold</option>
           </select>
         </div>
       </div>
@@ -578,7 +581,10 @@ function buildWebsite(copy, data) {
     maroon:   {bg:'#1a0810',ac:'#a8304a',tx:'#f5e8ef',card:'#2a0f1a',nav:'#120008',aclight:'#cc3d5a'},
     navy:     {bg:'#080e1a',ac:'#2e6bc4',tx:'#e8eef8',card:'#0f1c30',nav:'#050a12',aclight:'#3d7fd4'},
     dark:     {bg:'#0a0a08',ac:'#d4a84b',tx:'#f5f0e8',card:'#161612',nav:'#050503',aclight:'#e8c97a'},
-    minimal:  {bg:'#ffffff',ac:'#2c2c2c',tx:'#1a1a1a',card:'#f5f5f5',nav:'#1a1a1a',aclight:'#444444'}
+    minimal:  {bg:'#ffffff',ac:'#2c2c2c',tx:'#1a1a1a',card:'#f5f5f5',nav:'#1a1a1a',aclight:'#444444'},
+    saffron:  {bg:'#1a1005',ac:'#d4870a',tx:'#f5ede0',card:'#261808',nav:'#100a02',aclight:'#f0a832'},
+    teal:     {bg:'#051418',ac:'#1a9e8f',tx:'#e0f5f3',card:'#0a2228',nav:'#020c10',aclight:'#22c4b2'},
+    crimson:  {bg:'#0f0505',ac:'#c0202a',tx:'#f5eaea',card:'#1e0a0a',nav:'#080202',aclight:'#e8c84b'}
   };
   const t = themes[data.theme]||themes.midnight;
   const waNumber = data.phone.replace(/\D/g,'');
